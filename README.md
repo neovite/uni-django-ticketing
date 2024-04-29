@@ -1,6 +1,5 @@
 # Django Ticketing System
 
-Welcome to the Django Ticketing System project! This project is a web-based ticketing system developed using Django, a high-level Python web framework.
 
 ## Overview
 
