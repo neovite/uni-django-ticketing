@@ -1,0 +1,100 @@
+{% extends "_base.html" %}
+{% block content %}
+
+<div class="row">
+
+    
+    <div class="col-md-6">
+      <div class="card ticket-detail">
+        <div class="card-header">
+            
+            <h5 class="card-title">{{ticket.title}}</h5>
+        </div>
+        <div class="card-body">
+        
+          <p class="card-text"><strong>Ticket Number:</strong> <small>{{ticket.ticket_number}}</small></p>
+          <p></p>
+          <p class="card-text"><strong>Ticket Description:</strong><small> {{ticket.description}}</small></p>
+          <p></p>
+          <p class="card-text"><strong>Created On:</strong><small> {{ticket.created_by}}</small></p>
+          <p class="card-text"><strong>Assigned To:</strong><small> {{ticket.assigned_to}}</small></p>
+          <p class="card-text"><strong>Assigned On:</strong><small> {{ticket.accepted_date}}</small></p>
+          {% if not ticket.is_resolved %}
+          <p class="card-text"><strong>Resolved Yet:  </strong><span class="badge text-bg-danger">NO</span></p>
+          {% elif ticket.is_resolved %}
+          <p class="card-text"><strong>Resolved Yet:  </strong><span class="badge text-bg-success">YES</span></p>
+          <p class="card-text"><strong>Resolved On:  </strong><small>{{ticket.closed_date}}</small></p>
+          {% endif %}
+          {% if ticket.ticket_status == "Active" %}
+            <p class="card-text"><strong>Status:   </strong><span class="badge text-bg-primary">{{ticket.ticket_status}}</span></p>
+          {% elif ticket.ticket_status == "Pending" %}
+            <p class="card-text"><strong>Status:   </strong><span class="badge text-bg-warning">{{ticket.ticket_status}}</span></p>
+          {% elif ticket.ticket_status == "Completed" %}
+            <p class="card-text"><strong>Status:   </strong><span class="badge text-bg-success">{{ticket.ticket_status}}</span></p>
+          {% endif %}
+        </div>
+      </div>
+      <p></p>
+      {% if not ticket.is_resolved %}
+      {% if not ticket.assigned_to and request.user.is_engineer %}
+      <button class="btn btn-primary"><a href="{% url "accept-ticket" ticket.pk %}" class="nav-link">Accept Ticket</a></button>
+      {% endif %}
+      {% if request.user.is_engineer and ticket.assigned_to == request.user %}
+      <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal2">Confirm resolution</button>
+      {% elif request.user.is_customer%}
+      <button class="btn btn-info"><a href="{% url "update-ticket" ticket.pk %}" class="nav-link">Update Ticket</a></button>
+      {% endif %}
+      {% endif %}
+    </div>
+    
+    <!-- ticket_per_user -->
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          {{ticket.created_by}} Ticket History
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr class="text-center">
+                        <th scope="col">Title</th>
+                        <th scope="col">Ticket ID</th>
+                        <th scope="col">More</th>
+                    </tr>
+                </thead>
+                {% for ticket in tickets_per_user %}
+              <tbody>
+                
+                <tr class="ticket-history-row text-center">
+                    <td>{{ticket.title}}</td>
+                    <td>{{ticket.ticket_number}}</td>
+                    <td><a href="{% url "ticket-details" ticket.ticket_number %}" >View</a></td>
+                </tr>
+            </tbody>
+            {% endfor %}
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+
+  <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        
+        <div class="modal-body">
+          <p>Are you Sure You Want To Close This Ticket?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+          <button type="button" class="btn btn-primary"><a href="{% url "close-ticket" ticket.pk %}" class="nav-link">Save changes</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}

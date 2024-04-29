@@ -1,0 +1,23 @@
+{% extends "_base.html" %}
+{% block content %}
+
+
+<div class="container">
+    <div class="row mb-7 space">
+        <div class="col">
+            <h1 class="text-center ">Welcome to the Ticket Management System</h1>
+        </div>
+    </div>
+    {% if user.is_authenticated %}
+        <h4 class="text-center">Welcome {{user.username}}</h4>
+        <h4 class="text-center">You Can Control Your Actions In Dachboard And Ticket Panel</h4>
+        {% else %}
+        <div class="row">
+            <div class="col text-center feature">
+                <h4>To Get Started Please <a href="{% url "login" %}">Login</a> Or <a href="{% url "register-customer" %}">Register</a></h4>
+            </div>
+        </div>
+        {% endif %}
+</div>
+
+{% endblock content %}
